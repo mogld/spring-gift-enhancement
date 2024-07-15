@@ -1,6 +1,7 @@
 package gift.controller;
 
 import gift.model.Product;
+import gift.service.CategoryService;
 import gift.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +21,12 @@ import java.util.Map;
 public class ProductController {
 
     private final ProductService productService;
+    private final CategoryService categoryService;
 
     @Autowired
-    public ProductController(ProductService productService) {
+    public ProductController(ProductService productService, CategoryService categoryService) {
         this.productService = productService;
+        this.categoryService = categoryService;
     }
 
     @PostMapping
@@ -31,22 +34,9 @@ public class ProductController {
         if (bindingResult.hasErrors()) {
             return new ResponseEntity<>(bindingResult.getAllErrors(), HttpStatus.BAD_REQUEST);
         }
+        product.setCategory(categoryService.findById(product.getCategory().getId()));
         productService.save(product);
         return new ResponseEntity<>(HttpStatus.CREATED);
-    }
-
-    @GetMapping
-    public ResponseEntity<Page<Product>> getAllProducts(Pageable pageable) {
-        return productService.getAllProducts(pageable);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable Long id) {
-        Product product = productService.findById(id);
-        if (product == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
     @PutMapping(value = "/{id}", consumes = "application/x-www-form-urlencoded", produces = "application/json")
@@ -64,6 +54,7 @@ public class ProductController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
+        existingProduct.setCategory(categoryService.findById(updatedProduct.getCategory().getId()));
         existingProduct.setName(updatedProduct.getName());
         existingProduct.setPrice(updatedProduct.getPrice());
         existingProduct.setImageurl(updatedProduct.getImageurl());
@@ -71,6 +62,20 @@ public class ProductController {
 
         productService.update(existingProduct);
         return new ResponseEntity<>(existingProduct, HttpStatus.OK);
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<Product>> getAllProducts(Pageable pageable) {
+        return productService.getAllProducts(pageable);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Product> getProductById(@PathVariable Long id) {
+        Product product = productService.findById(id);
+        if (product == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

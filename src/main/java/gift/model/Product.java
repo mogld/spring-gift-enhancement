@@ -24,6 +24,10 @@ public class Product {
     @Column(nullable = false)
     private String imageurl;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
+
     @OneToMany(mappedBy = "product")
     private List<Wish> wishes;
 
@@ -64,5 +68,13 @@ public class Product {
 
     public void setWishes(List<Wish> wishes) {
         this.wishes = wishes;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 }

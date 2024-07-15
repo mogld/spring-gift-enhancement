@@ -1,8 +1,6 @@
 package gift.service;
 
 import gift.dto.WishResponse;
-import gift.model.Member;
-import gift.model.Product;
 import gift.model.Wish;
 import gift.repository.WishRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +40,8 @@ public class WishService {
         wishResponse.setProductName(wish.getProduct().getName());
         wishResponse.setProductPrice(wish.getProduct().getPrice());
         wishResponse.setProductImageurl(wish.getProduct().getImageurl());
+        wishResponse.setProductCategory(wish.getProduct().getCategory().getName());
+
         return wishResponse;
     }
 }

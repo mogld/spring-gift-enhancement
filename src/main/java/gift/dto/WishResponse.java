@@ -5,8 +5,17 @@ public class WishResponse {
     private String productName;
     private int productPrice;
     private String productImageurl;
+    private String productCategory;
 
     public WishResponse() {
+    }
+
+    public WishResponse(Long id, String productName, int productPrice, String productImageurl, String productCategory) {
+        this.id = id;
+        this.productName = productName;
+        this.productPrice = productPrice;
+        this.productImageurl = productImageurl;
+        this.productCategory = productCategory;
     }
 
     public Long getId() {
@@ -39,5 +48,13 @@ public class WishResponse {
 
     public void setProductImageurl(String productImageurl) {
         this.productImageurl = productImageurl;
+    }
+
+    public String getProductCategory() {
+        return productCategory;
+    }
+
+    public void setProductCategory(String productCategory) {
+        this.productCategory = productCategory;
     }
 }
