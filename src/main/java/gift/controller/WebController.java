@@ -54,13 +54,16 @@ public class WebController {
         if (response.getStatusCode() != HttpStatus.OK || response.getBody() == null) {
             return "error/500";
         }
-        model.addAttribute("products", response.getBody());
+        Page<Product> productPage = response.getBody();
+        model.addAttribute("products", productPage);
+        model.addAttribute("currentPage", productPage.getNumber());
+        model.addAttribute("totalPages", productPage.getTotalPages());
         return "product/index";
     }
 
     @GetMapping("/products/new")
     public String showNewProductForm(Model model) {
-        Product product = Product.builder().build();
+        Product product = new Product();
         model.addAttribute("product", product);
         return "product/new";
     }

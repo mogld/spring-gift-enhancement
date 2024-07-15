@@ -12,6 +12,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Controller
 @RequestMapping("/api/products")
 public class ProductController {
@@ -46,13 +49,28 @@ public class ProductController {
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Object> updateProduct(@Valid @PathVariable Long id, @RequestBody Product product, BindingResult bindingResult) {
+    @PutMapping(value = "/{id}", consumes = "application/x-www-form-urlencoded", produces = "application/json")
+    public ResponseEntity<Object> updateProduct(@PathVariable Long id, @Valid @ModelAttribute Product updatedProduct, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return new ResponseEntity<>(bindingResult.getAllErrors(), HttpStatus.BAD_REQUEST);
+            Map<String, String> errors = new HashMap<>();
+            bindingResult.getFieldErrors().forEach(error ->
+                    errors.put(error.getField(), error.getDefaultMessage())
+            );
+            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
         }
-        productService.update(product);
-        return new ResponseEntity<>(HttpStatus.OK);
+
+        Product existingProduct = productService.findById(id);
+        if (existingProduct == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        existingProduct.setName(updatedProduct.getName());
+        existingProduct.setPrice(updatedProduct.getPrice());
+        existingProduct.setImageurl(updatedProduct.getImageurl());
+        existingProduct.setWishes(updatedProduct.getWishes());
+
+        productService.update(existingProduct);
+        return new ResponseEntity<>(existingProduct, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
