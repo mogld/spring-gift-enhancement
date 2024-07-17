@@ -1,6 +1,7 @@
 package gift.service;
 
 import gift.model.Product;
+import gift.model.ProductOption;
 import gift.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
@@ -8,6 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -19,6 +22,7 @@ public class ProductService {
     }
 
     public void save(Product product) {
+        validateProductOptions(product);
         productRepository.save(product);
     }
 
@@ -28,7 +32,7 @@ public class ProductService {
     }
 
     public void update(Product updatedProduct) {
-
+        validateProductOptions(updatedProduct);
         productRepository.save(updatedProduct);
     }
 
@@ -37,7 +41,13 @@ public class ProductService {
     }
 
     public void delete(Long id) {
-
         productRepository.deleteById(id);
+    }
+
+    private void validateProductOptions(Product product) {
+        List<ProductOption> options = product.getOptions();
+        if (options == null || options.isEmpty()) {
+            throw new IllegalArgumentException("Product must have at least one option.");
+        }
     }
 }

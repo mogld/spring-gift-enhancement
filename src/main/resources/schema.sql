@@ -2,6 +2,7 @@ DROP TABLE IF EXISTS wish;
 DROP TABLE IF EXISTS product;
 DROP TABLE IF EXISTS member;
 DROP TABLE IF EXISTS category;
+DROP TABLE IF EXISTS product_option;
 
 CREATE TABLE category (
                           id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -29,4 +30,12 @@ CREATE TABLE wish (
                       product_id BIGINT NOT NULL,
                       FOREIGN KEY (member_id) REFERENCES member(id),
                       FOREIGN KEY (product_id) REFERENCES product(id)
+);
+CREATE TABLE product_option (
+                                id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                                name VARCHAR(50) NOT NULL,
+                                quantity INT NOT NULL,
+                                product_id BIGINT NOT NULL,
+                                FOREIGN KEY (product_id) REFERENCES product(id),
+                                UNIQUE (product_id, name)
 );
