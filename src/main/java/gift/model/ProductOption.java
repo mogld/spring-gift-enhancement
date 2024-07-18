@@ -50,10 +50,10 @@ public class ProductOption {
         this.product = product;
     }
 
-   //수량차감
+    //수량 차감
     public void subtractQuantity(int quantityToSubtract) {
         if (this.quantity < quantityToSubtract) {
-            throw new IllegalArgumentException("Not enough quantity available");
+            throw new IllegalArgumentException("quantity 수량 부족");
         }
         this.quantity -= quantityToSubtract;
     }
